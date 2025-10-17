@@ -1,0 +1,12 @@
+DATABASE mydb {
+    ENTITY User {
+        id: INT,
+        name: TEXT,
+        active: BOOL
+    }
+
+    CREATE User WITH (id = 1, name = "Alice", active = TRUE);
+    READ User WHERE active = TRUE;
+    UPDATE User SET name = "Alicia" WHERE id = 1;
+    DELETE User WHERE id = 1;
+}

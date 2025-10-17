@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+bison/crud.tab.c
+bison/crud.tab.h
+bison/crud_parser
