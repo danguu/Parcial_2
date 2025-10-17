@@ -1,6 +1,4 @@
-# Parcial 2
-
-Este repositorio contiene implementaciones y experimentos solicitados en el enunciado del parcial.
+# Parcial
 
 ## 1. Gramática CRUD
 
