@@ -1,0 +1,46 @@
+[
+  {
+    "case": "valid_5",
+    "input": "id0 + id1 + id2 + id3 + id4",
+    "tokens": 10,
+    "ll1_time": 0.0002828529999305829,
+    "ll1_peak_mem": 12277,
+    "ll1_success": true,
+    "cyk_time": 0.004785628000036013,
+    "cyk_peak_mem": 21160,
+    "cyk_success": true
+  },
+  {
+    "case": "invalid_5",
+    "input": "id0 + id1 + id2 + id3 + id4 +",
+    "tokens": 11,
+    "ll1_time": 0.0002611589999332864,
+    "ll1_peak_mem": 10909,
+    "ll1_success": false,
+    "cyk_time": 0.005868802000009055,
+    "cyk_peak_mem": 25392,
+    "cyk_success": false
+  },
+  {
+    "case": "valid_10",
+    "input": "id0 + id1 + id2 + id3 + id4 + id5 + id6 + id7 + id8 + id9",
+    "tokens": 20,
+    "ll1_time": 0.00047292499994000536,
+    "ll1_peak_mem": 20743,
+    "ll1_success": true,
+    "cyk_time": 0.0415669799999705,
+    "cyk_peak_mem": 84264,
+    "cyk_success": true
+  },
+  {
+    "case": "invalid_10",
+    "input": "id0 + id1 + id2 + id3 + id4 + id5 + id6 + id7 + id8 + id9 +",
+    "tokens": 21,
+    "ll1_time": 0.000454071000035583,
+    "ll1_peak_mem": 22183,
+    "ll1_success": false,
+    "cyk_time": 0.04853769500005001,
+    "cyk_peak_mem": 92880,
+    "cyk_success": false
+  }
+]

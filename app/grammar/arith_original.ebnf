@@ -1,0 +1,5 @@
+(* Gramática aritmética original *)
+E = E "+" T | T ;
+T = T "*" F | F ;
+F = "(" E ")" | Identifier ;
+Identifier = <IdentifierToken> ;

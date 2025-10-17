@@ -1,0 +1,86 @@
+(* Mini lenguaje CRUD EBNF specification *)
+
+(* Terminals and lexical conventions *)
+(* Identifiers: letter (letter | digit | '_')* *)
+(* NumericLiteral: digit+ ('.' digit+)? *)
+(* StringLiteral: '"' (any char except '"' or '\\')* '"' with escapes \" and \\ allowed *)
+(* Whitespace: spaces, tabs, newlines. Comments start with '#' and run until end of line. *)
+
+(* Token precedence (highest to lowest) for expressions in WHERE clause: *)
+(* 1. Parentheses () override all precedence. *)
+(* 2. Unary NOT. *)
+(* 3. Multiplicative comparisons (=, !=, <, <=, >, >=). *)
+(* 4. AND. *)
+(* 5. OR. *)
+
+(* Grammar *)
+Program        = { Statement ";" } ;
+
+Statement      = CreateStmt | ReadStmt | UpdateStmt | DeleteStmt ;
+
+CreateStmt     = "CREATE" "TABLE" Identifier "(" FieldList ")" ;
+FieldList      = FieldDecl { "," FieldDecl } ;
+FieldDecl      = Identifier TypeSpec [ DefaultSpec ] ;
+TypeSpec       = "INT" | "TEXT" | "BOOL" | "FLOAT" ;
+DefaultSpec    = "DEFAULT" Literal ;
+
+ReadStmt       = "READ" SourceSpec [ WhereClause ] [ OrderClause ] [ LimitClause ] ;
+SourceSpec     = Identifier | Identifier "AS" Identifier ;
+OrderClause    = "ORDER" "BY" OrderList ;
+OrderList      = OrderItem { "," OrderItem } ;
+OrderItem      = QualifiedIdentifier [ ("ASC" | "DESC") ] ;
+LimitClause    = "LIMIT" NumericLiteral [ "OFFSET" NumericLiteral ] ;
+
+UpdateStmt     = "UPDATE" Identifier "SET" AssignmentList [ WhereClause ] ;
+AssignmentList = Assignment { "," Assignment } ;
+Assignment     = QualifiedIdentifier "=" Expr ;
+
+DeleteStmt     = "DELETE" "FROM" Identifier [ WhereClause ] ;
+
+WhereClause    = "WHERE" Disjunction ;
+Disjunction    = Conjunction { "OR" Conjunction } ;
+Conjunction    = Negation { "AND" Negation } ;
+Negation       = [ "NOT" ] Comparison ;
+Comparison     = Sum ( RelOp Sum )? ;
+RelOp          = "=" | "!=" | "<" | "<=" | ">" | ">=" ;
+Sum            = Term { ("+" | "-") Term } ;
+Term           = Factor { ("*" | "/") Factor } ;
+Factor         = "(" Expr ")" | QualifiedIdentifier | Literal | ("-" Factor) ;
+Expr           = Sum ;
+
+Literal        = NumericLiteral | StringLiteral | BooleanLiteral ;
+BooleanLiteral = "TRUE" | "FALSE" ;
+Identifier     = <IdentifierToken> ;
+QualifiedIdentifier = Identifier { "." Identifier } ;
+NumericLiteral = <NumericLiteralToken> ;
+StringLiteral  = <StringLiteralToken> ;
+
+(* Examples of valid programs *)
+(*
+   CREATE TABLE users(id INT DEFAULT 0, name TEXT);
+   READ users WHERE id = 10;
+   UPDATE users SET name = "Ada" WHERE id = 10;
+   DELETE FROM users WHERE id != 10 AND NOT (name = "Bob");
+*)
+
+(*
+   READ users AS u ORDER BY u.name DESC LIMIT 10 OFFSET 5;
+   CREATE TABLE logs(event TEXT, created_at FLOAT DEFAULT 0.0);
+*)
+
+(* Examples of invalid programs *)
+(*
+   CREATE TABLE users(id INT, );             -- dangling comma
+   READ WHERE name = "Bob";                  -- missing source identifier
+   UPDATE users SET name = "Ada" id = 1;     -- missing comma between assignments
+   DELETE users;                              -- missing FROM keyword
+*)
+
+(* Acceptance tests (minimal) *)
+(*
+ 1. CREATE TABLE people(id INT, name TEXT DEFAULT "?");
+ 2. READ people WHERE id >= 10 OR name = "Ada";
+ 3. UPDATE people SET id = 1, name = "Bob";
+ 4. DELETE FROM people;
+ 5. READ data AS d ORDER BY d.x ASC, d.y DESC LIMIT 5;
+*)

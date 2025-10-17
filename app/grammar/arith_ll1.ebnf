@@ -1,0 +1,7 @@
+(* Gramática aritmética transformada a LL(1) *)
+E  = T E';
+E' = "+" T E' | "-" T E' | \u03b5;
+T  = F T';
+T' = "*" F T' | "/" F T' | \u03b5;
+F  = "(" E ")" | Identifier;
+Identifier = <IdentifierToken> ;
